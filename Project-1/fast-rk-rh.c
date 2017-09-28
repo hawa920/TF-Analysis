@@ -11,12 +11,6 @@
 typedef long long lld;
 
 
-__attribute__((always_inline)) inline int myabs(const char *src)
-{
-  return *src > 0 ? *src : -(*src);
-}
-
-
 int main(int argc, char **argv)
 {
 
@@ -57,13 +51,13 @@ int main(int argc, char **argv)
   /* get the hash value of pattern */
   for(idx_i = 0; idx_i < pat_len; idx_i++)
   {
-    pat_hv = (pat_hv * RK_RHB + myabs(pat + idx_i)) & RK_RHM;
+    pat_hv = (pat_hv * RK_RHB + (int) pat[idx_i]) & RK_RHM;
   }
 
   /* the the first pat_len length hash value of text */
   for(idx_i = 0; idx_i < pat_len; idx_i++)
   {
-    cur_hv = (cur_hv * RK_RHB + myabs(text_ptr + idx_i)) & RK_RHM;
+    cur_hv = (cur_hv * RK_RHB + (int) text_ptr[idx_i]) & RK_RHM;
   }
 
   /* get the pow(RK_RHB, pat_len - 1) */
@@ -86,14 +80,16 @@ int main(int argc, char **argv)
     else
       ;
 
-    cur_hv = ((cur_hv * RK_RHB)) + myabs(text_ptr + idx_i + pat_len);
-    cur_hv = cur_hv - ((myabs(text_ptr + idx_i) * base_power));
-    cur_hv = cur_hv > 0 ? cur_hv : cur_hv + RK_RHM + 1;
-    cur_hv = cur_hv & RK_RHM;
+    cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_i + pat_len]) - (int) text_ptr[idx_i] * base_power) & RK_RHM;
+    /*
+    cur_hv = ((cur_hv * RK_RHB)) + (int) text_ptr[idx_i + pat_len];
+    cur_hv = cur_hv - (((int)text_ptr[idx_i] * base_power));
+    cur_hv = cur_hv & RK_RHM; // tricky step
+    */
     assert(cur_hv >= 0);
   }
 
-/*
+/* There's no overflow problems in this case since the boundary is well-controlled.
     if(pat_hv == cur_hv)
   {
     printf("Found pattern at text[%d]\n", idx_i);
