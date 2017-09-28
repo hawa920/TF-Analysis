@@ -1,3 +1,10 @@
+/*
+ *
+ * Pattern matching using Rabin-Karp Rolling Hash
+ *    theorical time complexity O(N+m)
+ *
+ * */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -15,38 +22,39 @@ int main(int argc, char **argv)
 {
 
   FILE *fd = fopen((*(argv + 1)), "r");
-  //
+  /* see if fopen works */
   assert(fd != NULL);
-  //
 
-  const int RK_RHB = 31;
-  const int RK_RHM = ((1 << 30) - 1);
+
+  const int RK_RHB = 31; /* define Rabin-Karp Rolling Hash Base */
+  const int RK_RHM = ((1 << 30) - 1); /* define Rabin-Karp Rolling Hash Moduler */
   int fsize, ret, pat_len, idx_i, idx_j;
   lld pat_hv = 0, cur_hv = 0, base_power = 1;
   char *text_ptr, pat[MAX_PAT_LEN];
 
 
   ret = fseek(fd, 0, SEEK_END);
-  //
+  /* see if fseek works */
   assert(ret != -1);
-  //
-  fsize = (int) ftell(fd);
-  ret = fseek(fd, 0, SEEK_SET);
-  //
-  assert(ret != -1);
-  //
-  text_ptr = (char *) malloc(sizeof(char) * fsize);
-  //
-  assert(text_ptr != NULL);
-  //
-  ret = (int) fread(text_ptr, fsize, 1, fd);
 
+  fsize = (int) ftell(fd); /* get the entire file size in bytes */
+  ret = fseek(fd, 0, SEEK_SET);
+  /* see if fseek works */
+  assert(ret != -1);
+
+  text_ptr = (char *) malloc(sizeof(char) * fsize);
+  /* see if malloc works */
+  assert(text_ptr != NULL);
+
+  ret = (int) fread(text_ptr, fsize, 1, fd);
   fclose(fd);
 
   printf("Enter pattern to search ...\n");
   scanf("%s", pat);
   pat_len = (int) strlen(pat);
 
+  /* detect overflow */
+  assert(pat[pat_len] != '\0');
 
   /* get the hash value of pattern */
   for(idx_i = 0; idx_i < pat_len; idx_i++)
@@ -66,9 +74,9 @@ int main(int argc, char **argv)
     base_power = (base_power * RK_RHB) & RK_RHM;
   }
 
+  /* ----------------------------O(N) searching----------------------------------*/
 
-  /* O(N) searching */
-
+   /* Since the boundary is well defined, there's no way to lead to overflows. */
 
   for(idx_i = 0; idx_i <= fsize - pat_len; idx_i++)
   {
@@ -80,21 +88,13 @@ int main(int argc, char **argv)
     else
       ;
 
+    /* The tricky step here is to use bitwise-& to avoid constantly moduling and calling for math::abs */
     cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_i + pat_len]) - (int) text_ptr[idx_i] * base_power) & RK_RHM;
-    /*
-    cur_hv = ((cur_hv * RK_RHB)) + (int) text_ptr[idx_i + pat_len];
-    cur_hv = cur_hv - (((int)text_ptr[idx_i] * base_power));
-    cur_hv = cur_hv & RK_RHM; // tricky step
-    */
+
+    /* detect bugs */
     assert(cur_hv >= 0);
   }
 
-/* There's no overflow problems in this case since the boundary is well-controlled.
-    if(pat_hv == cur_hv)
-  {
-    printf("Found pattern at text[%d]\n", idx_i);
-  }
-*/
   free(text_ptr);
   return 0;
 }
