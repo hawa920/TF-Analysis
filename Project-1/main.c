@@ -1,17 +1,25 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <sys/time.h>
 
-extern char *strdup(const char *__S);
 
+/*---------Constant define--------
+ * Rabin-Karp rolling hash base,
+ * Rabin-Karp rolling hash moduler,
+ * Size of the hash table,
+ * -------------------------------*/
 const int RK_RHB = 31;
-//const int RK_RHM = ((1 << 30) - 1);
 const int RK_RHM = ((1 << 22) - 1);
 const int HTSIZE = ((1 << 22) - 1);
 
 
+/* ----------------------------
+ * Nodes designed for linkedlist,
+ * use when collisions occur.
+ * ----------------------------*/
 typedef struct dt_linkedlist
 {
   int counter;
@@ -21,6 +29,9 @@ typedef struct dt_linkedlist
 } dt_linkedlist;
 
 
+/*------------------------------
+ * Nodes designed for hashtable
+ * -----------------------------*/
 typedef struct dt_hashtable
 {
   int list_len;
@@ -29,8 +40,20 @@ typedef struct dt_hashtable
 } dt_hashtable;
 
 
+
 typedef long long lld;
 
+
+/*
+ * ----------------------Description-------------------------*
+ * Build up a hash table and insert the keys inside it
+ * according to the hash value of the keys.
+ * ---------------------Time Consuming-----------------------*
+ * Calculating hash value -> constant,
+ * Finding corresponded buckets -> constant,
+ * Filter duplicate keys -> constant (depends on collision),
+ * ----------------------------------------------------------*
+ */
 
 dt_hashtable **Key_Hashing(const char *key_path)
 {
@@ -128,7 +151,16 @@ dt_hashtable **Key_Hashing(const char *key_path)
   return ptht;
 }
 
-
+/* -----------------Function Description-------------------
+ * Given the length of the key,
+ * the program will compare the string using
+ * the hash value in constant time
+ * --------------------Time Consuming----------------------
+ *  Calculating hash value -> constant time,
+ *  Finding out corresponded buckets -> O(1),
+ *  Traverse linkedlist if there's collision -> constant,
+ *  Check if the strings are the same-> O(strlen)
+ *  ------------------------------------------------------*/
 void Key_Counting(const char *txt_path, dt_hashtable **ptht)
 {
   FILE *fd = fopen(txt_path, "r");
@@ -159,7 +191,7 @@ void Key_Counting(const char *txt_path, dt_hashtable **ptht)
 
 
   /* Counting occurence of keys */
-  for(idx_i = 6; idx_i <= 21; idx_i += 3)
+  for(idx_i = byte_low_bnd; idx_i <= byte_up_bnd; idx_i += 3)
   {
 
     /* calculating corresponded base-power */
@@ -217,7 +249,9 @@ void Key_Counting(const char *txt_path, dt_hashtable **ptht)
 }
 
 
-
+/*------------------------------------
+ *  Print out the counting result
+ * ---------------------------------*/
 void Show_Counting_Result(dt_hashtable **ptht)
 {
 
@@ -230,7 +264,7 @@ void Show_Counting_Result(dt_hashtable **ptht)
     {
       for(p_linkedlist = ptht[idx_i] -> head; p_linkedlist != NULL; p_linkedlist = p_linkedlist -> p_next)
       {
-        printf("%s:\t%d times\n", p_linkedlist -> key, p_linkedlist -> counter);
+        printf("%s:\t%d\n", p_linkedlist -> key, p_linkedlist -> counter);
       }
     }
 
@@ -241,6 +275,10 @@ void Show_Counting_Result(dt_hashtable **ptht)
   }
 }
 
+
+/* ----------------------------------------------
+ * Free all dynamic allocatingm, including strdup
+ * ----------------------------------------------*/
 void Free_Hashing(dt_hashtable **ptht)
 {
   int idx_i, idx_j;
@@ -270,7 +308,6 @@ int main(int argc, char **argv)
   const char *key_path = *(argv + 1);
   const char *txt_path = *(argv + 2);
   dt_hashtable **ptht; /* ptr to hashtable */
-
   ptht = Key_Hashing(key_path);
   Key_Counting(txt_path, ptht);
   Show_Counting_Result(ptht);
