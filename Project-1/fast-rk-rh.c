@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 {
 
   FILE *fd = fopen((*(argv + 1)), "r");
-  /* see if fopen works */
+  /* debugging code */
   assert(fd != NULL);
 
 
@@ -30,20 +30,20 @@ int main(int argc, char **argv)
   const int RK_RHM = ((1 << 30) - 1); /* define Rabin-Karp Rolling Hash Moduler */
   int fsize, ret, pat_len, idx_i, idx_j;
   lld pat_hv = 0, cur_hv = 0, base_power = 1;
-  char *text_ptr, pat[MAX_PAT_LEN];
+  char *text_ptr, pat[MAX_PAT_LEN], ifsame;
 
 
   ret = fseek(fd, 0, SEEK_END);
-  /* see if fseek works */
+  /* debugging code */
   assert(ret != -1);
 
   fsize = (int) ftell(fd); /* get the entire file size in bytes */
   ret = fseek(fd, 0, SEEK_SET);
-  /* see if fseek works */
+  /* debugging code */
   assert(ret != -1);
 
   text_ptr = (char *) malloc(sizeof(char) * fsize);
-  /* see if malloc works */
+  /* debugging code */
   assert(text_ptr != NULL);
 
   ret = (int) fread(text_ptr, fsize, 1, fd);
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
   pat_len = (int) strlen(pat);
 
   /* detect overflow */
-  assert(pat[pat_len] != '\0');
+  assert(pat[pat_len] == '\0');
 
   /* get the hash value of pattern */
   for(idx_i = 0; idx_i < pat_len; idx_i++)
@@ -68,6 +68,7 @@ int main(int argc, char **argv)
     cur_hv = (cur_hv * RK_RHB + (int) text_ptr[idx_i]) & RK_RHM;
   }
 
+  fclose(fd);
   /* get the pow(RK_RHB, pat_len - 1) */
   for(idx_i = 0; idx_i < pat_len; idx_i++)
   {
@@ -82,7 +83,18 @@ int main(int argc, char **argv)
   {
     if(pat_hv == cur_hv)
     {
-      printf("Found pattern at text[%d]\n", idx_i);
+      ifsame = '1';
+      for(idx_j = 0; idx_j < pat_len; idx_j++)
+      {
+        if(pat[idx_j] != text_ptr[idx_i + idx_j])
+        {
+          ifsame = '0';
+          break;
+        }
+      }
+
+      if(ifsame == '1')
+        printf("Found pattern at text[%d]\n", idx_i);
     }
 
     else
