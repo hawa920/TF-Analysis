@@ -151,6 +151,7 @@ dt_hashtable **Key_Hashing(const char *key_path)
   return ptht;
 }
 
+
 /* -----------------Function Description-------------------
  * Given the length of the key,
  * the program will compare the string using
@@ -301,10 +302,8 @@ void Free_Hashing(dt_hashtable **ptht)
 }
 
 
-
 int main(int argc, char **argv)
 {
-
   const char *key_path = *(argv + 1);
   const char *txt_path = *(argv + 2);
   dt_hashtable **ptht; /* ptr to hashtable */

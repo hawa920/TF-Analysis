@@ -42,7 +42,7 @@ Notes:
     but if you don't (for example, if you have a fixed length of string to search), then a table would be a disaster.
 
 
-    C strstr function is really fast implementation for finding occurence for a given substring, the algorithm lies behind is KMP algorithm,
+    C strstr function is a really fast implementation for finding occurence for a given substring, the algorithm lies behind is KMP algorithm,
 
     strstr might be fast when doing single pattern searching, but in this project, it takes forever to finish calculating the occurence of millions of words.
 
