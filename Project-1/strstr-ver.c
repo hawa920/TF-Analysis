@@ -29,9 +29,11 @@ int main(int argc, char ** argv)
   scanf("%s", pat);
 
   /* strstr seaching */
+  int i, len = strlen(pat);
   char *p = text_ptr;
   while((p = strstr(p, pat)) != NULL)
   {
+
     printf("Found pattern at text[%d]\n", (int) (p - text_ptr));
     p++;
   }
