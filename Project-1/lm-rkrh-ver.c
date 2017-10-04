@@ -54,7 +54,6 @@ typedef long long lld;
  * Filter duplicate keys -> constant (depends on collision),
  * ----------------------------------------------------------*
  */
-
 dt_hashtable **Key_Hashing(const char *key_path)
 {
   FILE *fd = fopen(key_path, "r");
@@ -106,7 +105,6 @@ dt_hashtable **Key_Hashing(const char *key_path)
       p_linkedlist -> key = strdup(buf);
       p_linkedlist -> counter = 0;
       p_linkedlist -> p_next = NULL;
-
     }
 
     /* if the bucket isn't empty */
@@ -150,6 +148,7 @@ dt_hashtable **Key_Hashing(const char *key_path)
   fclose(fd);
   return ptht;
 }
+
 
 /* -----------------Function Description-------------------
  * Given the length of the key,
@@ -212,7 +211,6 @@ void Key_Counting(const char *txt_path, dt_hashtable **ptht)
 
     for(idx_j = 0; idx_j <= bound; idx_j++)
     {
-
       if(ptht[cur_hv] != NULL)
       {
         p_linkedlist = ptht[cur_hv] -> head;
@@ -266,7 +264,6 @@ void Key_Counting(const char *txt_path, dt_hashtable **ptht)
         /* debugger */
         assert(cur_hv >= 0);
       }
-
     }
   }
   free(text_ptr);
@@ -325,10 +322,8 @@ void Free_Hashing(dt_hashtable **ptht)
 }
 
 
-
 int main(int argc, char **argv)
 {
-
   const char *key_path = *(argv + 1);
   const char *txt_path = *(argv + 2);
   dt_hashtable **ptht; /* ptr to hashtable */
@@ -336,6 +331,5 @@ int main(int argc, char **argv)
   Key_Counting(txt_path, ptht);
   Show_Counting_Result(ptht);
   Free_Hashing(ptht);
-
   return 0;
 }
