@@ -267,7 +267,8 @@ void pthread_counting(void *pstruct)
         }
       }
     }
-    /* drop the leading character and add the tailing one */
+    /* drop the leading character and add the tailing one, according to the distribution law,
+     * (A+B) % C = ((A%C)+(B%C)) % C, so as to % bitmask. */
     cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_i + key_len]) - (int) text_ptr[idx_i] * base_power) & RK_RHM;
     /* debugger */
     assert(cur_hv >= 0);
