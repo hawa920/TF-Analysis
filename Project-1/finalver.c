@@ -298,14 +298,11 @@ void pthread_counting(void *pstruct)
           continue;
         }
 
-        /* drop the leading character and add the tailing one */
-        else
-        {
-          cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_j + idx_i]) - (int) text_ptr[idx_j] * base_power) & RK_RHM;
-          /* debugger */
-          assert(cur_hv >= 0);
-        }
       }
+      /* drop the leading character and add the tailing one */
+      cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_j + idx_i]) - (int) text_ptr[idx_j] * base_power) & RK_RHM;
+      /* debugger */
+      assert(cur_hv >= 0);
     }
   }
 }
