@@ -279,31 +279,32 @@ void pthread_counting(void *pstruct)
             continue;
           }
         }
-      }
-      if(ifsame == '1')
-      {
-        ifsame = '0';
-        for(idx_k = 0; idx_k < idx_i; idx_k++)
-        {
-          text_ptr[idx_j + idx_k] = '\0';
-        }
-        /* re-pre-hash */
-        idx_j = idx_j + idx_i;
-        cur_hv = 0;
-        for(idx_k = 0; idx_k < idx_i; idx_k++)
-        {
-          cur_hv = (cur_hv * RK_RHB + (int) text_ptr[idx_j + idx_k]) & RK_RHM;
-        }
-        idx_j--; /* since the for loop will ++idx_j */
-        continue;
-      }
 
-      /* drop the leading character and add the tailing one */
-      else
-      {
-        cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_j + idx_i]) - (int) text_ptr[idx_j] * base_power) & RK_RHM;
-        /* debugger */
-        assert(cur_hv >= 0);
+        if(ifsame == '1')
+        {
+          ifsame = '0';
+          for(idx_k = 0; idx_k < idx_i; idx_k++)
+          {
+            text_ptr[idx_j + idx_k] = '\0';
+          }
+          /* re-pre-hash */
+          idx_j = idx_j + idx_i;
+          cur_hv = 0;
+          for(idx_k = 0; idx_k < idx_i; idx_k++)
+          {
+            cur_hv = (cur_hv * RK_RHB + (int) text_ptr[idx_j + idx_k]) & RK_RHM;
+          }
+          idx_j--; /* since the for loop will ++idx_j */
+          continue;
+        }
+
+        /* drop the leading character and add the tailing one */
+        else
+        {
+          cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_j + idx_i]) - (int) text_ptr[idx_j] * base_power) & RK_RHM;
+          /* debugger */
+          assert(cur_hv >= 0);
+        }
       }
     }
   }
@@ -406,5 +407,7 @@ int main()
     pthread_join(pid[idx_i], NULL);
   }
 
+  show_result(ptht);
+  free_dynamic(ptht, ptpt, n_thread);
   return 0;
 }
