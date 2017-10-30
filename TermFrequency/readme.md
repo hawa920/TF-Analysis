@@ -10,7 +10,7 @@
 > 3. 把文本(article)讀進來，從頭 traverse 一遍，實做 Rabin-Karp Rolling hash 可以完成統計長度為 k 的所有詞的頻率。
 
 
-**Note：**  當m為2的冪次方減1，a%(m+1) = a & m，且遵守分配律。
+**Note：**  當m為2的冪次方減1，a%(m+1) = a & m，且遵守分配律。詳見 ./Bitwise-and 目錄的程式
 
 
 ` cur_hv = (((cur_hv * RK_RHB) + (int) text_ptr[idx_i + key_len]) - (int) text_ptr[idx_i] * base_power) & RK_RHM;`
