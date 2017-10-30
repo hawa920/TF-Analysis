@@ -1,4 +1,4 @@
-## Term Frequency
+## Term Frequency  詞頻統計
 ### 說明
 > 給定一文本(article)，以及一詞單(word list)，統計詞單中的字詞在文本中的出現頻率。
 
